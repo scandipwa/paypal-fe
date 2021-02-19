@@ -8,12 +8,11 @@
  * @package scandipwa/base-theme
  * @link https://github.com/scandipwa/base-theme
  */
-// eslint-disable-next-line no-unused-vars
-export const addPaypalFields = (args, callback, instance) => ([
+export const addPaypalFields = (args, callback) => [
     ...callback(...args),
     'paypal_sandbox_flag',
     'paypal_client_id'
-]);
+];
 
 export default {
     'Query/Config': {

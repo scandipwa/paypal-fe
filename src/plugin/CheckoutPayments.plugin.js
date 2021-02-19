@@ -1,80 +1,83 @@
+/* eslint-disable */
+/**
+ * ScandiPWA - Progressive Web App for Magento
+ *
+ * Copyright © Scandiweb, Inc. All rights reserved.
+ * See LICENSE for license details.
+ *
+ * @license OSL-3.0 (Open Software License ("OSL") v. 3.0)
+ * @package scandipwa/base-theme
+ * @link https://github.com/scandipwa/base-theme
+ */
 import PayPal from '../component/PayPal';
 import { PAYPAL_EXPRESS, PAYPAL_EXPRESS_CREDIT } from '../component/PayPal/PayPal.config';
 
-export class CheckoutPaymentsPlugin {
-    renderPayPal() {
-        const {
-            selectedPaymentCode,
-            setLoading,
-            setDetailsStep
-        } = this.props;
+export const renderPayPal = (instance) => {
+    const {
+        selectedPaymentCode,
+        setLoading,
+        setDetailsStep
+    } = instance.props;
 
-        return (
-            <PayPal
-              setLoading={ setLoading }
-              setDetailsStep={ setDetailsStep }
-              selectedPaymentCode={ selectedPaymentCode }
-            />
-        );
-    }
-
-    aroundPaymentRenderMap = (originalMember, instance) => ({
-        ...originalMember,
-        [PAYPAL_EXPRESS_CREDIT]: instance.renderNotSupported.bind(instance)
-    });
-
-    aroundRenderContent = (args, callback, instance) => (
-        <div>
-            { callback.apply(instance, args) }
-            { this.renderPayPal.apply(instance) }
-        </div>
+    return (
+        <PayPal
+          setLoading={ setLoading }
+          setDetailsStep={ setDetailsStep }
+          selectedPaymentCode={ selectedPaymentCode }
+        />
     );
+};
 
-    aroundComponentDidUpdate = (args, callback = () => {}, instance) => {
-        const [prevProps] = args;
-        const { selectedPaymentCode, setOrderButtonVisibility } = instance.props;
-        const { selectedPaymentCode: prevSelectedPaymentCode } = prevProps;
+export const paymentRenderMap = (originalMember, instance) => ({
+    ...originalMember,
+    [PAYPAL_EXPRESS_CREDIT]: instance.renderNotSupported.bind(instance)
+});
 
-        if (selectedPaymentCode !== prevSelectedPaymentCode) {
-            if (selectedPaymentCode === PAYPAL_EXPRESS) {
-                setOrderButtonVisibility(false);
-            }
+// TODO rework with cloneElement
+export const renderContent = (args, callback, instance) => (
+    <div>
+        { callback.apply(instance, args) }
+        { renderPayPal(instance) }
+    </div>
+);
 
-            if (prevSelectedPaymentCode === PAYPAL_EXPRESS) {
-                setOrderButtonVisibility(true);
-            }
-        }
+export const componentDidUpdate = (args, callback = () => {}, instance) => {
+    const [prevProps] = args;
+    const { selectedPaymentCode, setOrderButtonVisibility } = instance.props;
+    const { selectedPaymentCode: prevSelectedPaymentCode } = prevProps;
 
-        callback.apply(instance, args);
-    };
-
-    aroundComponentDidMount = (args, callback, instance) => {
-        const { selectedPaymentCode, setOrderButtonVisibility } = instance.props;
-
-        callback(...args);
-
+    if (selectedPaymentCode !== prevSelectedPaymentCode) {
         if (selectedPaymentCode === PAYPAL_EXPRESS) {
             setOrderButtonVisibility(false);
         }
-    }
-}
 
-const {
-    aroundPaymentRenderMap,
-    aroundRenderContent,
-    aroundComponentDidUpdate,
-    aroundComponentDidMount
-} = new CheckoutPaymentsPlugin();
+        if (prevSelectedPaymentCode === PAYPAL_EXPRESS) {
+            setOrderButtonVisibility(true);
+        }
+    }
+
+    callback.apply(instance, args);
+};
+
+export const componentDidMount = (args, callback, instance) => {
+    const { selectedPaymentCode, setOrderButtonVisibility } = instance.props;
+
+    callback(...args);
+
+    if (selectedPaymentCode === PAYPAL_EXPRESS) {
+        setOrderButtonVisibility(false);
+    }
+};
 
 export const config = {
     'Component/CheckoutPayments/Component': {
         'member-function': {
-            renderContent: aroundRenderContent,
-            componentDidUpdate: aroundComponentDidUpdate,
-            componentDidMount: aroundComponentDidMount
+            renderContent,
+            componentDidUpdate,
+            componentDidMount
         },
         'member-property': {
-            paymentRenderMap: aroundPaymentRenderMap
+            paymentRenderMap
         }
     }
 };

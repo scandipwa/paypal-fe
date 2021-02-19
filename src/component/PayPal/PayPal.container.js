@@ -13,25 +13,24 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import CheckoutQuery from 'Query/Checkout.query';
-import CartDispatcher from 'Store/Cart/Cart.dispatcher';
 import { showNotification } from 'Store/Notification/Notification.action';
 import { isSignedIn } from 'Util/Auth';
+import { getGuestQuoteId } from 'Util/Cart';
 import { fetchMutation } from 'Util/Request';
 
 import PayPalQuery from '../../query/PayPal.query';
 import PayPal from './PayPal.component';
 import { PAYPAL_EXPRESS, PAYPAL_SCRIPT } from './PayPal.config';
 
-
 /** @namespace Scandipwa/PayPalGraphQl/Component/PayPal/Container/mapStateToProps */
-export const mapStateToProps = state => ({
+export const mapStateToProps = (state) => ({
     cartTotals: state.CartReducer.cartTotals,
     clientId: state.ConfigReducer.paypal_client_id,
     isSandboxEnabled: state.ConfigReducer.paypal_sandbox_flag
 });
 
 /** @namespace Scandipwa/PayPalGraphQl/Component/PayPal/Container/mapDispatchToProps */
-export const mapDispatchToProps = dispatch => ({
+export const mapDispatchToProps = (dispatch) => ({
     showNotification: (type, message, e) => dispatch(showNotification(type, message, e))
 });
 
@@ -144,7 +143,7 @@ export class PayPalContainer extends PureComponent {
         return token;
     };
 
-    _getGuestQuoteId = () => (isSignedIn() ? '' : CartDispatcher._getGuestQuoteId());
+    _getGuestQuoteId = () => (isSignedIn() ? '' : getGuestQuoteId());
 
     render() {
         return (

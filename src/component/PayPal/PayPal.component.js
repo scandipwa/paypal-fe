@@ -9,8 +9,6 @@
  * @link https://github.com/scandipwa/base-theme
  */
 
-import './PayPal.style';
-
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 
@@ -19,6 +17,8 @@ import Loader from 'Component/Loader';
 import { TotalsType } from 'Type/MiniCart';
 
 import { PAYPAL_SCRIPT } from './PayPal.config';
+
+import './PayPal.style';
 
 /**
  * *Note*
@@ -57,11 +57,11 @@ export class PayPal extends PureComponent {
         }
 
         return clientId;
-    }
+    };
 
     getPayPalScript = () => {
         const {
-            cartTotals: { base_currency_code },
+            cartTotals: { base_currency_code }
         } = this.props;
 
         const params = {
