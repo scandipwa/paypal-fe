@@ -30,16 +30,9 @@ export const renderPayPal = (instance) => {
 
 export const paymentRenderMap = (originalMember, instance) => ({
     ...originalMember,
-    [PAYPAL_EXPRESS_CREDIT]: instance.renderNotSupported.bind(instance)
+    [PAYPAL_EXPRESS_CREDIT]: instance.renderNotSupported.bind(instance),
+    [PAYPAL_EXPRESS]: renderPayPal
 });
-
-// TODO rework with cloneElement
-export const renderContent = (args, callback, instance) => (
-    <div>
-        { callback.apply(instance, args) }
-        { renderPayPal(instance) }
-    </div>
-);
 
 export const componentDidUpdate = (args, callback = () => {}, instance) => {
     const [prevProps] = args;
@@ -72,7 +65,6 @@ export const componentDidMount = (args, callback, instance) => {
 export const config = {
     'Component/CheckoutPayments/Component': {
         'member-function': {
-            renderContent,
             componentDidUpdate,
             componentDidMount
         },
