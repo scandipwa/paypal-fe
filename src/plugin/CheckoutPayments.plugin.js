@@ -31,7 +31,7 @@ export const renderPayPal = (instance) => {
 export const paymentRenderMap = (originalMember, instance) => ({
     ...originalMember,
     [PAYPAL_EXPRESS_CREDIT]: instance.renderNotSupported.bind(instance),
-    [PAYPAL_EXPRESS]: renderPayPal
+    [PAYPAL_EXPRESS]: () => renderPayPal(instance)
 });
 
 export const componentDidUpdate = (args, callback = () => {}, instance) => {
